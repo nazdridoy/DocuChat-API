@@ -5,6 +5,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import time
 from typing import Optional
+# Remove tomllib and pyproject.toml logic
+try:
+    from importlib.metadata import version as get_version
+except ImportError:
+    from importlib_metadata import version as get_version
+
+def get_app_version():
+    try:
+        return get_version("ducuchat-api")
+    except Exception:
+        return "unknown"
 
 from .api.router import api_router
 from .session import session_manager
@@ -13,7 +24,7 @@ from .session import session_manager
 app = FastAPI(
     title="DocuChat API",
     description="A Python REST API for DocuChat that enables document chat with RAG",
-    version="0.1.0",
+    version=get_app_version(),
 )
 
 # Add CORS middleware to allow cross-origin requests
@@ -33,6 +44,7 @@ PUBLIC_PATHS = [
     "/api/session/list",
     "/api/session/update/",
     "/api/session/expire/",
+    "/api/session/config/",
     "/docs",
     "/redoc",
     "/openapi.json"
@@ -46,7 +58,7 @@ async def authenticate_request(request: Request, call_next):
     
     # Skip authentication for public paths
     if any(path == public_path for public_path in PUBLIC_PATHS) or \
-       any(path.startswith(prefix) for prefix in ["/api/session/update/", "/api/session/expire/"]):
+       any(path.startswith(prefix) for prefix in ["/api/session/update/", "/api/session/expire/", "/api/session/config/"]):
         return await call_next(request)
     
     # Check for session ID header
@@ -113,8 +125,8 @@ async def root():
     """Root endpoint that returns basic API information"""
     return {
         "name": "DocuChat API",
-        "version": "0.1.0",
-        "description": "A Python REST API for document chat with RAG"
+        "version": app.version,
+        "description": app.description
     }
 
 
@@ -125,13 +137,23 @@ async def health_check():
     return {"status": "healthy"}
 
 
-# Run the application when executed directly
-if __name__ == "__main__":
-    port = int(os.getenv("PORT", "8000"))
+def main():
+    import argparse
+    import uvicorn
+    parser = argparse.ArgumentParser(description="Run the DocuChat API server.")
+    parser.add_argument('--host', type=str, default='0.0.0.0', help='Host to bind the server to')
+    parser.add_argument('--port', type=int, default=8000, help='Port to bind the server to')
+    parser.add_argument('--reload', action='store_true', help='Enable auto-reload')
+    parser.add_argument('--log-level', type=str, default='info', help='Uvicorn log level')
+    args = parser.parse_args()
+
     uvicorn.run(
-        "app.main:app", 
-        host="0.0.0.0", 
-        port=port, 
-        reload=True,
-        log_level="info"
-    ) 
+        "ducuchat_api.main:app",
+        host=args.host,
+        port=args.port,
+        reload=args.reload,
+        log_level=args.log_level
+    )
+
+if __name__ == "__main__":
+    main() 

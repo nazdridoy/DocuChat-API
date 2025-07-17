@@ -206,9 +206,9 @@ wheels = [
 ]
 
 [[package]]
-name = "ducuchat-python"
-version = "0.1.0"
-source = { virtual = "." }
+name = "ducuchat-api"
+version = "0.2.1"
+source = { editable = "." }
 dependencies = [
     { name = "aiosqlite" },
     { name = "asyncio" },

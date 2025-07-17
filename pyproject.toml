@@ -1,7 +1,7 @@
 [project]
-name = "ducuchat-python"
-version = "0.1.0"
-description = "Add your description here"
+name = "ducuchat-api"
+version = "0.2.1"
+description = "DocuChat API: A feature-rich, session-based RAG document chat backend with SQLite vector search, LangChain, and OpenAI integration."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -25,3 +25,14 @@ dependencies = [
     "uuid>=1.30",
     "uvicorn>=0.22.0",
 ]
+license = {text = "AGPL-3.0"}
+authors = [
+    {name = "nazdridoy", email = "nazdridoy399@gmail.com"}
+]
+
+[project.scripts]
+ducuchat-api = "ducuchat_api.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

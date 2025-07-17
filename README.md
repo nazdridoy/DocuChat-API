@@ -1,4 +1,4 @@
-# DocuChat Python API
+# DocuChat API
 
 A Python implementation of the DocuChat RAG (Retrieval-Augmented Generation) API, based on the Node.js version. This API enables document chat functionality with advanced RAG features including HyDE, MMR re-ranking, and deep search.
 
@@ -35,8 +35,8 @@ A Python implementation of the DocuChat RAG (Retrieval-Augmented Generation) API
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/ducuchat-python.git
-   cd ducuchat-python
+   git clone https://github.com/nazdridoy/ducuchat-api.git
+   cd ducuchat-api
    ```
 
 2. Install dependencies:
@@ -46,12 +46,41 @@ A Python implementation of the DocuChat RAG (Retrieval-Augmented Generation) API
 
 ### Running the API
 
-Start the server:
+You can now run the API using the CLI entry point:
+
 ```bash
-python -m app.main
+uv run ducuchat-api --host 0.0.0.0 --port 8080
 ```
 
-The API will be available at http://localhost:8000.
+Or, if you have your virtual environment activated, you can run directly:
+
+```bash
+source .venv/bin/activate
+ducuchat-api --host 0.0.0.0 --port 8080
+```
+
+Or see all available options:
+
+```bash
+uv run ducuchat-api --help
+```
+
+#### CLI Options
+
+```
+usage: ducuchat-api [-h] [--host HOST] [--port PORT] [--reload] [--log-level LOG_LEVEL]
+
+Run the DocuChat API server.
+
+options:
+  -h, --help            show this help message and exit
+  --host HOST           Host to bind the server to
+  --port PORT           Port to bind the server to
+  --reload              Enable auto-reload
+  --log-level LOG_LEVEL Uvicorn log level
+```
+
+The API will be available at the host and port you specify (default: http://0.0.0.0:8000).
 
 ## API Usage
 
@@ -65,34 +94,49 @@ Sessions are used to manage configuration. You must create a session before usin
 curl -X POST http://localhost:8000/api/session/create \
   -H "Content-Type: application/json" \
   -d '{
-    "db_path": "./data.db",                       # Path to SQLite database file (required)
-    "embedding_dimensions": 384,                  # Vector embedding dimensions (optional, detected from DB)
-    
-    "openai_api_key": "your-api-key",            # OpenAI API key for chat (required)
-    "openai_base_url": "https://api.openai.com/v1", # OpenAI API base URL (default: https://api.openai.com/v1)
-    "openai_model": "gpt-3.5-turbo",             # OpenAI model for chat (default: gpt-3.5-turbo)
-    
-    "rag_api_key": "your-embedding-api-key",     # API key for embeddings (optional, defaults to openai_api_key)
-    "rag_base_url": "https://api.openai.com/v1", # Embeddings API base URL (default: https://api.openai.com/v1)
-    "rag_model": "text-embedding-3-small",       # Embeddings model (default: text-embedding-3-small)
-    
-    "chunk_size": 1000,                          # Document chunk size (optional, auto-sized based on embedding dimensions)
-    "chunk_overlap": 200,                        # Document chunk overlap (optional, defaults to 20% of chunk_size)
-    
-    "similarity_threshold": 0.5,                 # Minimum similarity score for retrieval (default: 0.5)
-    "context_max_length": 4096,                  # Maximum context length for LLM (default: 4096)
-    "deep_search_enabled": true,                 # Enable deep search with HyDE (default: true)
-    "deep_search_initial_threshold": 0.3,        # Initial threshold for deep search (default: 0.3)
-    
-    "max_file_size": 10485760,                   # Maximum file size in bytes (default: 10MB)
-    "upload_directory": "./uploads"              # Directory for uploaded files (default: ./uploads)
+    "db_path": "./data.db",
+    "openai_base_url": "https://api.openai.com/v1",
+    "openai_api_key": "sk-OPENAI-API-KEY-1234567890",
+    "openai_model": "gpt-3.5-turbo",
+    "rag_model": "text-embedding-3-small"
   }'
 ```
 
 Response:
 ```json
 {
-  "session_id": "550e8400-e29b-41d4-a716-446655440000"
+  "session_id": "cafd852c-830d-4e35-9dc3-cc31e61f75c9",
+  "vector_search": true
+}
+```
+
+#### View Session Config (Public Endpoint)
+
+You can view the full configuration for any session (no authentication required):
+
+```bash
+curl --location 'http://localhost:8000/api/session/config/cafd852c-830d-4e35-9dc3-cc31e61f75c9'
+```
+
+Example response:
+```json
+{
+  "db_path": "/home/youruser/ducuchat-api/data.db",
+  "embedding_dimensions": 384,
+  "openai_base_url": "https://api.openai.com/v1",
+  "openai_model": "gpt-3.5-turbo",
+  "openai_api_key": "sk-OPENAI-API-KEY-1234567890",
+  "rag_base_url": "https://api.openai.com/v1",
+  "rag_model": "text-embedding-3-small",
+  "rag_api_key": null,
+  "chunk_size": null,
+  "chunk_overlap": null,
+  "similarity_threshold": 0.5,
+  "context_max_length": 4096,
+  "deep_search_enabled": true,
+  "deep_search_initial_threshold": 0.3,
+  "max_file_size": 10485760,
+  "upload_directory": "./uploads"
 }
 ```
 
@@ -105,19 +149,19 @@ curl -X GET http://localhost:8000/api/session/list
 #### Update Session
 
 ```bash
-curl -X POST http://localhost:8000/api/session/update/550e8400-e29b-41d4-a716-446655440000 \
+curl -X POST http://localhost:8000/api/session/update/cafd852c-830d-4e35-9dc3-cc31e61f75c9 \
   -H "Content-Type: application/json" \
   -d '{
     "db_path": "./data.db",
-    "openai_api_key": "new-api-key",
-    "openai_model": "gpt-4"
+    "openai_api_key": "sk-NEW-API-KEY-0987654321",
+    "openai_model": "gemini-2.5-pro"
   }'
 ```
 
 #### Delete Session
 
 ```bash
-curl -X DELETE http://localhost:8000/api/session/expire/550e8400-e29b-41d4-a716-446655440000
+curl -X DELETE http://localhost:8000/api/session/expire/cafd852c-830d-4e35-9dc3-cc31e61f75c9
 ```
 
 ### Using the API Endpoints
@@ -126,14 +170,14 @@ For all API endpoints except session creation and listing, include the session I
 
 ```bash
 curl -X GET http://localhost:8000/api/documents \
-  -H "X-Session-ID: 550e8400-e29b-41d4-a716-446655440000"
+  -H "X-Session-ID: cafd852c-830d-4e35-9dc3-cc31e61f75c9"
 ```
 
 ## Project Structure
 
 ```
-ducuchat-python/
-├── app/
+ducuchat-api/
+├── ducuchat_api/
 │   ├── __init__.py
 │   ├── main.py                 # FastAPI application entry point
 │   ├── config.py               # Configuration management
@@ -164,4 +208,4 @@ pytest
 
 ## License
 
-[MIT License](LICENSE) 
+This project is licensed under the GNU Affero General Public License v3.0 - see the [LICENSE](LICENSE) file for details.

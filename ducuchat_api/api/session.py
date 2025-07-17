@@ -116,6 +116,17 @@ async def expire_session(session_id: str):
     return {"success": success}
 
 
+@router.get("/config/{session_id}")
+async def get_session_config_endpoint(session_id: str):
+    """
+    Public endpoint to view the config of a session by session_id
+    """
+    config = session_manager.get_config(session_id)
+    if not config:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return config
+
+
 def get_session_config(session_id: str) -> Dict[str, Any]:
     """
     Get session configuration for dependency injection
