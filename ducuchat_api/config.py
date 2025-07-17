@@ -6,7 +6,6 @@ import os
 class SessionConfig(BaseModel):
     """Session configuration schema for DocuChat Python API"""
     # Database configuration
-    db_path: str
     embedding_dimensions: Optional[int] = None
     
     # OpenAI API configuration (for chat)
@@ -72,12 +71,6 @@ def validate_session_config(config: Dict[str, Any]) -> Dict[str, Any]:
     if "upload_directory" in config and not os.path.exists(config["upload_directory"]):
         os.makedirs(config["upload_directory"], exist_ok=True)
         
-    # Ensure db directory exists
-    if "db_path" in config:
-        db_dir = os.path.dirname(config["db_path"])
-        if db_dir and not os.path.exists(db_dir):
-            os.makedirs(db_dir, exist_ok=True)
-    
     # Convert to Pydantic model for validation
     config_model = SessionConfig(**config)
     

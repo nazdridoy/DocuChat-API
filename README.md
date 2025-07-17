@@ -49,14 +49,14 @@ A Python implementation of the DocuChat RAG (Retrieval-Augmented Generation) API
 You can now run the API using the CLI entry point:
 
 ```bash
-uv run ducuchat-api --host 0.0.0.0 --port 8080
+uv run ducuchat-api --host 0.0.0.0 --port 8080 --database /tmp/temp-test.db
 ```
 
 Or, if you have your virtual environment activated, you can run directly:
 
 ```bash
 source .venv/bin/activate
-ducuchat-api --host 0.0.0.0 --port 8080
+ducuchat-api --host 0.0.0.0 --port 8080 --database /tmp/temp-test.db
 ```
 
 Or see all available options:
@@ -68,7 +68,7 @@ uv run ducuchat-api --help
 #### CLI Options
 
 ```
-usage: ducuchat-api [-h] [--host HOST] [--port PORT] [--reload] [--log-level LOG_LEVEL]
+usage: ducuchat-api [-h] [--host HOST] [--port PORT] [--reload] [--log-level LOG_LEVEL] --database DB_PATH
 
 Run the DocuChat API server.
 
@@ -78,6 +78,7 @@ options:
   --port PORT           Port to bind the server to
   --reload              Enable auto-reload
   --log-level LOG_LEVEL Uvicorn log level
+  --database DB_PATH    Path to the SQLite database file (required)
 ```
 
 The API will be available at the host and port you specify (default: http://0.0.0.0:8000).
@@ -94,7 +95,6 @@ Sessions are used to manage configuration. You must create a session before usin
 curl -X POST http://localhost:8000/api/session/create \
   -H "Content-Type: application/json" \
   -d '{
-    "db_path": "./data.db",
     "openai_base_url": "https://api.openai.com/v1",
     "openai_api_key": "sk-OPENAI-API-KEY-1234567890",
     "openai_model": "gpt-3.5-turbo",
@@ -121,7 +121,6 @@ curl --location 'http://localhost:8000/api/session/config/cafd852c-830d-4e35-9dc
 Example response:
 ```json
 {
-  "db_path": "/home/youruser/ducuchat-api/data.db",
   "embedding_dimensions": 384,
   "openai_base_url": "https://api.openai.com/v1",
   "openai_model": "gpt-3.5-turbo",
@@ -152,7 +151,6 @@ curl -X GET http://localhost:8000/api/session/list
 curl -X POST http://localhost:8000/api/session/update/cafd852c-830d-4e35-9dc3-cc31e61f75c9 \
   -H "Content-Type: application/json" \
   -d '{
-    "db_path": "./data.db",
     "openai_api_key": "sk-NEW-API-KEY-0987654321",
     "openai_model": "gemini-2.5-pro"
   }'

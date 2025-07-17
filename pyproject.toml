@@ -1,6 +1,6 @@
 [project]
 name = "ducuchat-api"
-version = "0.2.1"
+version = "0.2.2"
 description = "DocuChat API: A feature-rich, session-based RAG document chat backend with SQLite vector search, LangChain, and OpenAI integration."
 readme = "README.md"
 requires-python = ">=3.13"

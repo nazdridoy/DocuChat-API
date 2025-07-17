@@ -19,12 +19,22 @@ def get_app_version():
 
 from .api.router import api_router
 from .session import session_manager
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app):
+    db_path = os.environ.get('DUCUCHAT_DB_PATH')
+    if not db_path:
+        raise RuntimeError("Database path not set. Please start the server with --database <path>.")
+    app.state.db_path = db_path
+    yield
 
 # Create FastAPI application
 app = FastAPI(
     title="DocuChat API",
     description="A Python REST API for DocuChat that enables document chat with RAG",
     version=get_app_version(),
+    lifespan=lifespan,
 )
 
 # Add CORS middleware to allow cross-origin requests
@@ -145,7 +155,12 @@ def main():
     parser.add_argument('--port', type=int, default=8000, help='Port to bind the server to')
     parser.add_argument('--reload', action='store_true', help='Enable auto-reload')
     parser.add_argument('--log-level', type=str, default='info', help='Uvicorn log level')
+    parser.add_argument('--database', type=str, required=True, help='Path to the SQLite database file')
     args = parser.parse_args()
+
+    # Store db_path in a file for uvicorn reloads (since app.state is not preserved)
+    import os
+    os.environ['DUCUCHAT_DB_PATH'] = args.database
 
     uvicorn.run(
         "ducuchat_api.main:app",
@@ -154,6 +169,9 @@ def main():
         reload=args.reload,
         log_level=args.log_level
     )
+
+# Set db_path on app startup
+# The lifespan handler now manages this.
 
 if __name__ == "__main__":
     main() 
