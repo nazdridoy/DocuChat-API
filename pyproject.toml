@@ -1,0 +1,27 @@
+[project]
+name = "ducuchat-python"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "aiosqlite>=0.19.0",
+    "asyncio>=3.4.3",
+    "fastapi>=0.95.0",
+    "httpx>=0.24.0",
+    "langchain>=0.0.240",
+    "langchain-community>=0.0.10",
+    "langchain-openai>=0.0.2",
+    "numpy>=1.24.0",
+    "openai>=1.1.0",
+    "pdf2text>=1.0.0",
+    "pydantic>=2.0.0",
+    "pypdf>=3.15.0",
+    "pytest>=7.3.1",
+    "pytest-asyncio>=0.21.0",
+    "python-dotenv>=1.0.0",
+    "python-multipart>=0.0.6",
+    "sqlite-vec>=0.1.2",
+    "uuid>=1.30",
+    "uvicorn>=0.22.0",
+]
