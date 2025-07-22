@@ -13,7 +13,7 @@ except ImportError:
 
 def get_app_version():
     try:
-        return get_version("ducuchat-api")
+        return get_version("docuchat-api")
     except Exception:
         return "unknown"
 
@@ -23,7 +23,7 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app):
-    db_path = os.environ.get('DUCUCHAT_DB_PATH')
+    db_path = os.environ.get('DOCUCHAT_DB_PATH')
     if not db_path:
         raise RuntimeError("Database path not set. Please start the server with --database <path>.")
     app.state.db_path = db_path
@@ -160,10 +160,10 @@ def main():
 
     # Store db_path in a file for uvicorn reloads (since app.state is not preserved)
     import os
-    os.environ['DUCUCHAT_DB_PATH'] = args.database
+    os.environ['DOCUCHAT_DB_PATH'] = args.database
 
     uvicorn.run(
-        "ducuchat_api.main:app",
+        "docuchat_api.main:app",
         host=args.host,
         port=args.port,
         reload=args.reload,

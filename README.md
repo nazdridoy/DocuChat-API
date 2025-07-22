@@ -35,8 +35,8 @@ A Python implementation of the DocuChat RAG (Retrieval-Augmented Generation) API
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/nazdridoy/ducuchat-api.git
-   cd ducuchat-api
+   git clone https://github.com/nazdridoy/docuchat-api.git
+   cd docuchat-api
    ```
 
 2. Install dependencies:
@@ -49,26 +49,26 @@ A Python implementation of the DocuChat RAG (Retrieval-Augmented Generation) API
 You can now run the API using the CLI entry point:
 
 ```bash
-uv run ducuchat-api --host 0.0.0.0 --port 8080 --database /tmp/temp-test.db
+uv run docuchat-api --host 0.0.0.0 --port 8080 --database /tmp/temp-test.db
 ```
 
 Or, if you have your virtual environment activated, you can run directly:
 
 ```bash
 source .venv/bin/activate
-ducuchat-api --host 0.0.0.0 --port 8080 --database /tmp/temp-test.db
+docuchat-api --host 0.0.0.0 --port 8080 --database /tmp/temp-test.db
 ```
 
 Or see all available options:
 
 ```bash
-uv run ducuchat-api --help
+uv run docuchat-api --help
 ```
 
 #### CLI Options
 
 ```
-usage: ducuchat-api [-h] [--host HOST] [--port PORT] [--reload] [--log-level LOG_LEVEL] --database DB_PATH
+usage: docuchat-api [-h] [--host HOST] [--port PORT] [--reload] [--log-level LOG_LEVEL] --database DB_PATH
 
 Run the DocuChat API server.
 
@@ -174,8 +174,8 @@ curl -X GET http://localhost:8000/api/documents \
 ## Project Structure
 
 ```
-ducuchat-api/
-├── ducuchat_api/
+docuchat-api/
+├── docuchat_api/
 │   ├── __init__.py
 │   ├── main.py                 # FastAPI application entry point
 │   ├── config.py               # Configuration management

@@ -1,5 +1,5 @@
 [project]
-name = "ducuchat-api"
+name = "docuchat-api"
 version = "0.2.2"
 description = "DocuChat API: A feature-rich, session-based RAG document chat backend with SQLite vector search, LangChain, and OpenAI integration."
 readme = "README.md"
@@ -31,7 +31,7 @@ authors = [
 ]
 
 [project.scripts]
-ducuchat-api = "ducuchat_api.main:main"
+docuchat-api = "docuchat_api.main:main"
 
 [build-system]
 requires = ["hatchling"]
